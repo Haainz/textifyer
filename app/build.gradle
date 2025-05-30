@@ -1,17 +1,17 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id 'com.android.application'
 }
 
 android {
     namespace 'com.textifyer'
-    compileSdk 35
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.textifyer"
-        minSdk 24
-        targetSdk 35
-        versionCode 1
-        versionName "1.0"
+        minSdk 26
+        targetSdk 34
+        versionCode 100
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,11 +28,14 @@ android {
     }
     buildFeatures {
         viewBinding true
+        dataBinding true
+    }
+    aaptOptions {
+        noCompress "mdl", "conf", "mat", "mfcc", "raw", "fst", "txt", "pdf", "bin", "dat"
     }
 }
 
 dependencies {
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
@@ -41,4 +44,10 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation 'com.alphacephei:vosk-android:0.3.47'
+    implementation 'androidx.media:media:1.7.0'
+    implementation 'net.lingala.zip4j:zip4j:2.11.5'
+    implementation "androidx.media3:media3-transformer:1.4.0"
+    implementation "androidx.media3:media3-effect:1.4.0"
+    implementation "androidx.media3:media3-common:1.4.0"
 }
