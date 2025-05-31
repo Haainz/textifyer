@@ -9,7 +9,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,18 +43,39 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     private StringBuilder liveText = new StringBuilder();
     private MediaPlayer mediaPlayer;
     private SpeechStreamService speechStreamService;
+    private RelativeLayout btn_layout;
+    private ImageButton btn_share;
+    private ImageButton btn_copy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_target);
 
-        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
-        String modelPath = prefs.getString("model_path", "");
-
         textOutput = findViewById(R.id.textOutput);
         Button btnTranscribe = findViewById(R.id.btnTranscribe);
         handleIntent(getIntent());
+        btn_layout = findViewById(R.id.buttonLayout);
+        btn_layout.setVisibility(View.GONE);
+        btn_share = findViewById(R.id.btn_share);
+        btn_share.setOnClickListener(v -> {
+            String textToShare = textOutput.getText().toString();
+            if (!textToShare.isEmpty()) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, textToShare);
+                startActivity(Intent.createChooser(intent, "Teilen"));
+            }
+        });
+        btn_copy = findViewById(R.id.btn_copy);
+        btn_copy.setOnClickListener(v -> {
+            String textToCopy = textOutput.getText().toString();
+            if (!textToCopy.isEmpty()) {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", textToCopy);
+                clipboard.setPrimaryClip(clip);
+            }
+        });
 
         btnTranscribe.setOnClickListener(v -> startTranscription());
 
@@ -404,6 +428,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     @Override
     public void onFinalResult(String hypothesis) {
         appendResult(hypothesis);
+        btn_layout.setVisibility(View.VISIBLE);
         if (speechStreamService != null) {
             speechStreamService = null;
         }
