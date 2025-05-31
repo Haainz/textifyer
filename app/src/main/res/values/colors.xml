@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="blue_200">#FFBBDEFB</color>
+    <color name="blue_500">#FF2196F3</color>
+    <color name="blue_700">#FF1976D2</color>
+    <color name="green_200">#FFC8E6C9</color>
+    <color name="green_500">#FF4CAF50</color>
+    <color name="green_700">#FF388E3C</color>
+    <color name="yellow">#FFFFEB3B</color>
+    <color name="red">#FFF44336</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="textlight">#AFAFAF</color>
+    <color name="light_blue_50">#FFE1F5FE</color>
+    <color name="light_blue_200">#FF81D4FA</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="text_normal">#808080</color>
+    <color name="text_hint">#898989</color>
+    <color name="dialog_background">#424242</color>
+    <color name="darkgreyslider">#373737</color>
+    <color name="backgroundslidercolor">#303030</color>
 </resources>

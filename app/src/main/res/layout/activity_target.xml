@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:backgroundTintMode="add"
+    android:padding="16dp">
 
     <Button
         android:id="@+id/btnTranscribe"
@@ -26,6 +28,50 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textSize="16sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textOutput"
+                android:id="@+id/buttonLayout"
+                android:layout_marginTop="40dp">
+
+                <ImageButton
+                    android:id="@+id/btn_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="30dp"
+                    android:background="#00FFFFFF"
+                    android:src="@drawable/icon_share"
+                    app:tint="@color/green_500" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toLeftOf="@+id/btn_textshorter"
+                    android:layout_toRightOf="@+id/btn_share"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btn_copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00FFFFFF"
+                        android:src="@drawable/icon_copy"
+                        app:tint="@color/green_500" />
+                </RelativeLayout>
+
+                <ImageButton
+                    android:id="@+id/btn_textshorter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="30dp"
+                    android:background="#00FFFFFF"
+                    android:src="@drawable/icon_textshorter"
+                    app:tint="@color/green_500" />
+            </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>
