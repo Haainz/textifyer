@@ -2,16 +2,19 @@ package com.textifyer;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +40,7 @@ import java.nio.ByteBuffer;
 
 public class TargetActivity extends AppCompatActivity implements RecognitionListener {
 
-    private File opusFile;
+    private File audioFile;
     private TextView textOutput;
     private Model model;
     private StringBuilder liveText = new StringBuilder();
@@ -46,12 +49,20 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     private RelativeLayout btn_layout;
     private ImageButton btn_share;
     private ImageButton btn_copy;
+    private ImageButton btn_shorttext;
+    private TextView dataname;
+    private boolean isM4aFile = false;
+    private ProgressBar progressBar;
+    private TextView progressText;
+    private boolean hasFirstResult = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_target);
 
+        dataname = findViewById(R.id.datatxt);
         textOutput = findViewById(R.id.textOutput);
         Button btnTranscribe = findViewById(R.id.btnTranscribe);
         handleIntent(getIntent());
@@ -76,8 +87,18 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                 clipboard.setPrimaryClip(clip);
             }
         });
+        btn_shorttext = findViewById(R.id.btn_textshorter);
+        btn_shorttext.setOnClickListener(v -> {
+            btn_layout.setVisibility(View.GONE);
+            startTranscription();
+        });
+        progressBar = findViewById(R.id.progressBar);
+        progressText = findViewById(R.id.progressText);
 
-        btnTranscribe.setOnClickListener(v -> startTranscription());
+        btnTranscribe.setOnClickListener(v -> {
+            btn_layout.setVisibility(View.GONE);
+            startTranscription();
+        });
 
         initModel(); // Model initialisieren
     }
@@ -97,6 +118,8 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     private void startTranscription() {
         textOutput.setText("");
         liveText.setLength(0);
+        progressBar.setVisibility(View.VISIBLE);
+        progressText.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
             try {
@@ -105,7 +128,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                     return;
                 }
 
-                File wavFile = convertOpusToWav(opusFile); // Konvertiere die Opus-Datei in WAV
+                File wavFile = convertAudioToWav(audioFile); // Konvertiere die Audio-Datei in WAV
                 runOnUiThread(() -> playAudio(wavFile));
                 transcribeAudio(wavFile); // Transkribiere die WAV-Datei
 
@@ -156,16 +179,41 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     }
 
     private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEND.equals(intent.getAction()) &&
-                intent.getType() != null &&
-                intent.getType().startsWith("audio/")) {
+        Uri audioUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (audioUri != null) {
+            String fileName = getFileNameFromUri(audioUri);
+            Log.d("TargetActivity", "Received filename: " + fileName);
 
-            Uri audioUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            if (audioUri != null) {
-                opusFile = new File(getCacheDir(), "shared.opus");
-                saveFileFromUri(audioUri, opusFile);
+            audioFile = new File(getCacheDir(), fileName);
+
+            saveFileFromUri(audioUri, audioFile);
+            dataname.setText(audioFile.getPath());
+        } else {
+            Log.e("TargetActivity", "No audio URI found in intent");
+            runOnUiThread(() -> Toast.makeText(this, "Fehler: Keine Audiodatei erhalten", Toast.LENGTH_LONG).show());
+        }
+    }
+
+    private String getFileNameFromUri(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index != -1) {
+                        result = cursor.getString(index);
+                    }
+                }
             }
         }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     private void saveFileFromUri(Uri uri, File target) {
@@ -182,9 +230,9 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
         }
     }
 
-    private File convertOpusToWav(File opusFile) throws Exception {
+    private File convertAudioToWav(File audioFile) throws Exception {
         MediaExtractor extractor = new MediaExtractor();
-        extractor.setDataSource(opusFile.getPath());
+        extractor.setDataSource(audioFile.getPath());
 
         int trackIndex = selectAudioTrack(extractor);
         if (trackIndex < 0) {
@@ -253,9 +301,10 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     private void decodeAudioData(MediaExtractor extractor, int trackIndex, File wavFile, MediaFormat format)
             throws Exception {
 
+        long totalFileSize = audioFile.length(); // Eingabedateigröße zum Berechnen des Fortschritts
+
         try (FileOutputStream wavStream = new FileOutputStream(wavFile)) {
-            // Schreiben eines vorläufigen Headers
-            writeWavHeader(format, wavStream, 0); // 0 als Platzhalter
+            writeWavHeader(format, wavStream, 0); // Platzhalter für Header
 
             MediaCodec codec = MediaCodec.createDecoderByType(
                     extractor.getTrackFormat(trackIndex).getString(MediaFormat.KEY_MIME)
@@ -272,6 +321,11 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
             long totalDataSize = 0;
 
             extractor.selectTrack(trackIndex);
+
+            runOnUiThread(() -> {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(0);
+            });
 
             while (!sawOutputEOS) {
                 if (!sawInputEOS) {
@@ -302,13 +356,23 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                     byte[] chunk = new byte[info.size];
                     buffer.get(chunk);
 
-                    // Hier wird die Audio-Daten um das Vierfache beschleunigt
-                    // Nur jeden sechsten Sample schreiben
-                    for (int i = 0; i < chunk.length; i += 6) {
-                        wavStream.write(chunk, i, 2); // Schreibe nur 2 Bytes (16 Bit) für jedes sechste Sample
-                    }
-                    totalDataSize += chunk.length / 6 * 2; // Aktualisiere die Gesamtgröße
+                    int interval = isM4aFile ? 12 : 6;
 
+                    for (int i = 0; i < chunk.length; i += interval) {
+                        if (i + 1 < chunk.length) {
+                            wavStream.write(chunk, i, 2); // 2 Bytes pro Sample
+                            totalDataSize += 2;
+                        }
+                    }
+
+                    // Fortschritt berechnen
+                    if (totalFileSize > 0) {
+                        int progress = (int) ((100 * totalDataSize) / totalFileSize);
+                        runOnUiThread(() -> progressBar.setProgress(progress));
+                        if(progress == 100) {
+                            progressText.setText("Analysiere...");
+                        }
+                    }
                     codec.releaseOutputBuffer(outputBufferIndex, false);
 
                     if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
@@ -317,12 +381,16 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                 }
             }
 
-            // Header mit tatsächlicher Datenlänge aktualisieren
             updateWavHeader(wavFile, format, totalDataSize);
 
             codec.stop();
             codec.release();
             extractor.release();
+
+            runOnUiThread(() -> {
+                progressBar.setVisibility(View.GONE);
+                progressText.setVisibility(View.GONE);
+            });
         }
     }
 
@@ -379,7 +447,6 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
             if (ais.skip(44) != 44) throw new IOException("File too short");
 
             Recognizer rec = new Recognizer(model, 16000.0f);
-            rec.setMaxAlternatives(10);
             rec.setWords(true);
 
             speechStreamService = new SpeechStreamService(rec, ais, 16000);
@@ -394,6 +461,10 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
 
     @Override
     public void onPartialResult(String hypothesis) {
+        if (!hasFirstResult) {
+            hasFirstResult = true;
+            runOnUiThread(() -> progressBar.setVisibility(View.GONE));
+        }
         try {
             JSONObject partial = new JSONObject(hypothesis);
             if (partial.has("partial")) {
@@ -459,5 +530,12 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     @Override
     public void onTimeout() {
         runOnUiThread(() -> Toast.makeText(this, "Timeout", Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);  // Setze den neuen Intent, damit getIntent() aktualisiert ist
+        recreate(); // Starte die Activity neu, damit onCreate() mit dem neuen Intent erneut durchläuft
     }
 }

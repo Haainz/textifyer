@@ -3,15 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:backgroundTintMode="add"
+    android:orientation="vertical"
     android:padding="16dp">
+
+    <TextView
+        android:id="@+id/datatxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnTranscribe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Transkribieren" />
+        android:layout_marginTop="10dp"
+        android:text="@string/transcribe" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,10 +36,10 @@
                 android:textSize="16sp" />
 
             <RelativeLayout
+                android:id="@+id/buttonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textOutput"
-                android:id="@+id/buttonLayout"
                 android:layout_marginTop="40dp">
 
                 <ImageButton
@@ -46,21 +52,14 @@
                     android:src="@drawable/icon_share"
                     app:tint="@color/green_500" />
 
-                <RelativeLayout
+                <ImageButton
+                    android:id="@+id/btn_copy"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_toLeftOf="@+id/btn_textshorter"
-                    android:layout_toRightOf="@+id/btn_share"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/btn_copy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#00FFFFFF"
-                        android:src="@drawable/icon_copy"
-                        app:tint="@color/green_500" />
-                </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:background="#00FFFFFF"
+                    android:src="@drawable/icon_copy"
+                    app:tint="@color/green_500" />
 
                 <ImageButton
                     android:id="@+id/btn_textshorter"
@@ -74,4 +73,21 @@
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/progressText"
+        android:text="Konvertiere..."
+        android:visibility="gone"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:progressTint="@color/yellow"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        android:max="100"
+        android:progress="0" />
 </LinearLayout>

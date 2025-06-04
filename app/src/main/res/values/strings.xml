@@ -15,4 +15,5 @@
         transkribiert und als Text angezeigt.\n\nViel Spaß beim Ausprobieren!
     </string>
     <string name="starttexttitle">Willkommen! 👋</string>
+    <string name="transcribe">Transkribieren</string>
 </resources>

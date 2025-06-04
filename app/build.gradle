@@ -30,8 +30,8 @@ android {
         viewBinding true
         dataBinding true
     }
-    aaptOptions {
-        noCompress "mdl", "conf", "mat", "mfcc", "raw", "fst", "txt", "pdf", "bin", "dat"
+    androidResources {
+        noCompress 'mdl', 'conf', 'mat', 'mfcc', 'raw', 'fst', 'txt', 'pdf', 'bin', 'dat'
     }
 }
 
