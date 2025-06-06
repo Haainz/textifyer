@@ -16,4 +16,8 @@
     </string>
     <string name="starttexttitle">Willkommen! 👋</string>
     <string name="transcribe">Transkribieren</string>
+    <string name="settingstitle">Einstellungen</string>
+    <string name="lightmode">Hell</string>
+    <string name="darkmode">Dunkel</string>
+    <string name="systemmode">Systemeinstellung</string>
 </resources>

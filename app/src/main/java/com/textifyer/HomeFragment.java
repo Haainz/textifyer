@@ -20,13 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.textifyer.databinding.FragmentFirstBinding;
+import com.textifyer.databinding.FragmentHomeBinding;
 
-public class FirstFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
-    private static final String TAG = "FirstFragment";
+    private static final String TAG = "HomeFragment";
 
-    private FragmentFirstBinding binding;
+    private FragmentHomeBinding binding;
 
     // Permission string depending on Android version
     private String requiredPermission;
@@ -42,7 +42,7 @@ public class FirstFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
