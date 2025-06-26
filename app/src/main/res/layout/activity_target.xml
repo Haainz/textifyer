@@ -7,16 +7,31 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/datatxt"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/homebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:src="@drawable/icon_home"
+            app:tint="@color/green_500" />
+
+        <TextView
+            android:id="@+id/datatxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_toRightOf="@+id/homebtn" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/btnTranscribe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:text="@string/transcribe" />
 
     <ScrollView
@@ -73,21 +88,23 @@
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+
     <TextView
+        android:id="@+id/progressText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:id="@+id/progressText"
         android:text="Konvertiere..."
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="@android:style/Widget.ProgressBar.Horizontal"
-        android:progressTint="@color/yellow"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:layout_marginBottom="16dp"
-        android:visibility="gone"
         android:max="100"
-        android:progress="0" />
+        android:progress="0"
+        android:progressTint="@color/yellow"
+        android:visibility="gone" />
 </LinearLayout>

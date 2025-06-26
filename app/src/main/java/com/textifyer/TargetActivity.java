@@ -1,7 +1,11 @@
 package com.textifyer;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
@@ -19,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 public class TargetActivity extends AppCompatActivity implements RecognitionListener {
 
@@ -59,15 +65,19 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        String lang = prefs.getString("lang", "de");
+        setAppLocale(lang);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_target);
 
         dataname = findViewById(R.id.datatxt);
         textOutput = findViewById(R.id.textOutput);
         Button btnTranscribe = findViewById(R.id.btnTranscribe);
+        btnTranscribe.setVisibility(GONE);
         handleIntent(getIntent());
         btn_layout = findViewById(R.id.buttonLayout);
-        btn_layout.setVisibility(View.GONE);
+        btn_layout.setVisibility(GONE);
         btn_share = findViewById(R.id.btn_share);
         btn_share.setOnClickListener(v -> {
             String textToShare = textOutput.getText().toString();
@@ -89,18 +99,27 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
         });
         btn_shorttext = findViewById(R.id.btn_textshorter);
         btn_shorttext.setOnClickListener(v -> {
-            btn_layout.setVisibility(View.GONE);
+            btn_layout.setVisibility(GONE);
             startTranscription();
         });
         progressBar = findViewById(R.id.progressBar);
         progressText = findViewById(R.id.progressText);
 
         btnTranscribe.setOnClickListener(v -> {
-            btn_layout.setVisibility(View.GONE);
+            btn_layout.setVisibility(GONE);
             startTranscription();
         });
 
         initModel(); // Model initialisieren
+
+        ImageButton homeBtn = findViewById(R.id.homebtn);
+        homeBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(TargetActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("navigate_to_home", true); // optionales Signal
+            startActivity(intent);
+            finish(); // Beende TargetActivity
+        });
     }
 
     private void initModel() {
@@ -108,6 +127,8 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                 (model) -> {
                     this.model = model;
                     Log.d("Model", "Model successfully loaded");
+                    Button btnTranscribe = findViewById(R.id.btnTranscribe);
+                    btnTranscribe.setVisibility(VISIBLE);
                 },
                 (exception) -> {
                     Log.e("Model", "Failed to unpack the model: " + exception.getMessage());
@@ -118,8 +139,8 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     private void startTranscription() {
         textOutput.setText("");
         liveText.setLength(0);
-        progressBar.setVisibility(View.VISIBLE);
-        progressText.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(VISIBLE);
+        progressText.setVisibility(VISIBLE);
 
         new Thread(() -> {
             try {
@@ -323,7 +344,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
             extractor.selectTrack(trackIndex);
 
             runOnUiThread(() -> {
-                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(VISIBLE);
                 progressBar.setProgress(0);
             });
 
@@ -388,8 +409,8 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
             extractor.release();
 
             runOnUiThread(() -> {
-                progressBar.setVisibility(View.GONE);
-                progressText.setVisibility(View.GONE);
+                progressBar.setVisibility(GONE);
+                progressText.setVisibility(GONE);
             });
         }
     }
@@ -463,7 +484,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     public void onPartialResult(String hypothesis) {
         if (!hasFirstResult) {
             hasFirstResult = true;
-            runOnUiThread(() -> progressBar.setVisibility(View.GONE));
+            runOnUiThread(() -> progressBar.setVisibility(GONE));
         }
         try {
             JSONObject partial = new JSONObject(hypothesis);
@@ -499,7 +520,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     @Override
     public void onFinalResult(String hypothesis) {
         appendResult(hypothesis);
-        btn_layout.setVisibility(View.VISIBLE);
+        btn_layout.setVisibility(VISIBLE);
         if (speechStreamService != null) {
             speechStreamService = null;
         }
@@ -537,5 +558,16 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
         super.onNewIntent(intent);
         setIntent(intent);  // Setze den neuen Intent, damit getIntent() aktualisiert ist
         recreate(); // Starte die Activity neu, damit onCreate() mit dem neuen Intent erneut durchläuft
+    }
+
+    private void setAppLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        config.setLayoutDirection(locale);
+
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 }
