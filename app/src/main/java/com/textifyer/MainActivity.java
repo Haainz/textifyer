@@ -2,6 +2,7 @@ package com.textifyer;
 
 import static androidx.core.graphics.drawable.DrawableCompat.applyTheme;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -36,8 +38,36 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+
+        // 1. Unterstützte Sprachen
+        String[] supportedLangs = {"de", "en", "es"};
+
+        // 2. Gespeicherte Sprache holen
+        String savedLang = prefs.getString("lang", null); // null = nicht gesetzt
+
+        if (savedLang == null) {
+            // 3. Sprache nicht gesetzt → Systemsprache ermitteln
+            String systemLang = Locale.getDefault().getLanguage();
+
+            boolean isSupported = false;
+            for (String lang : supportedLangs) {
+                if (lang.equals(systemLang)) {
+                    isSupported = true;
+                    break;
+                }
+            }
+
+            String finalLang = isSupported ? systemLang : "en"; // Fallback zu Englisch
+            prefs.edit().putString("lang", finalLang).apply();
+            setAppLocale(finalLang);
+        } else {
+            // 4. Sprache war gesetzt → übernehmen
+            setAppLocale(savedLang);
+        }
+
         super.onCreate(savedInstanceState);
-        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+
         int savedTheme = prefs.getInt("theme", R.id.radio_system);
         applyTheme(savedTheme);
 
@@ -59,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (getIntent().getBooleanExtra("navigate_to_home", false)) {
+            NavController navController1 = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            navController1.popBackStack(R.id.FirstFragment, false); // gehe zum Home-Fragment
+        }
+
         binding.settingsbtn.setOnClickListener(v -> {
             NavDestination currentDestination = navController.getCurrentDestination();
             if (currentDestination != null) {
@@ -73,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private void applyTheme(int checkedId) {
         if (checkedId == R.id.radio_light) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -82,5 +116,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         }
+    }
+
+    private void setAppLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        config.setLayoutDirection(locale);
+
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 }

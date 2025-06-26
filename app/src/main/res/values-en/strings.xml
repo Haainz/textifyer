@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Textifyer</string>
+    <string name="action_settings">Settings</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="settingsbtn">Settings</string>
+    <string name="paste">Click here to transcribe an audio file</string>
+    <string name="starttext">
+        With Textifyer you can easily convert voice messages into text.\nTo do this,
+        click on the button at the bottom center or share a voice message directly from
+        WhatsApp with this app. The voice message is then automatically transcribed
+        and displayed as text.\n\nHave fun trying it out!
+    </string>
+    <string name="starttexttitle">Welcome! 👋</string>
+    <string name="transcribe">Transcribe</string>
+    <string name="settingstitle">Settings</string>
+    <string name="lightmode">light</string>
+    <string name="darkmode">dark</string>
+    <string name="systemmode">System configuration</string>
+    <string name="language">language:</string>
+</resources>

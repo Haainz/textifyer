@@ -1,13 +1,10 @@
 <resources>
     <string name="app_name">Textifyer</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="settingsbtn">Einstellungen</string>
-    <string name="previous">Previous</string>
     <string name="paste">Klicke hier um eine Audio Datei zu transkribieren</string>
-
     <string name="starttext">
         Mit Textifyer kannst du ganz einfach Sprachnachrichten in Text
         umwandeln.\nKlicke dazu auf den Button unten in der Mitte oder teile eine Sprachnachricht
@@ -20,4 +17,5 @@
     <string name="lightmode">Hell</string>
     <string name="darkmode">Dunkel</string>
     <string name="systemmode">Systemeinstellung</string>
+    <string name="language">Sprache:</string>
 </resources>
