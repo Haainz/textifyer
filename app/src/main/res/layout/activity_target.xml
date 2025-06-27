@@ -60,31 +60,35 @@
                 <ImageButton
                     android:id="@+id/btn_share"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="24dp"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="30dp"
                     android:background="#00FFFFFF"
-                    android:src="@drawable/icon_share"
-                    app:tint="@color/green_500" />
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/icon_share" />
 
                 <ImageButton
                     android:id="@+id/btn_copy"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="24dp"
                     android:layout_centerHorizontal="true"
                     android:background="#00FFFFFF"
-                    android:src="@drawable/icon_copy"
-                    app:tint="@color/green_500" />
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/icon_copy" />
 
                 <ImageButton
-                    android:id="@+id/btn_textshorter"
+                    android:id="@+id/btn_playpause"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="30dp"
                     android:background="#00FFFFFF"
-                    android:src="@drawable/icon_textshorter"
-                    app:tint="@color/green_500" />
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/icon_play"
+                    app:tint="@color/green_500"/>
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>

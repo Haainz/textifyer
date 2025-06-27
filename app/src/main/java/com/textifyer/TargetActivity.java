@@ -55,12 +55,14 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     private RelativeLayout btn_layout;
     private ImageButton btn_share;
     private ImageButton btn_copy;
-    private ImageButton btn_shorttext;
+    private ImageButton btn_playpause;
+    private Button btnTranscribe;
     private TextView dataname;
     private boolean isM4aFile = false;
     private ProgressBar progressBar;
     private TextView progressText;
     private boolean hasFirstResult = false;
+    private boolean isPlaying = false;
 
 
     @Override
@@ -73,12 +75,13 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
 
         dataname = findViewById(R.id.datatxt);
         textOutput = findViewById(R.id.textOutput);
-        Button btnTranscribe = findViewById(R.id.btnTranscribe);
+        btnTranscribe = findViewById(R.id.btnTranscribe);
         btnTranscribe.setVisibility(GONE);
         handleIntent(getIntent());
         btn_layout = findViewById(R.id.buttonLayout);
         btn_layout.setVisibility(GONE);
         btn_share = findViewById(R.id.btn_share);
+        btn_share.setColorFilter(getResources().getColor(R.color.green_500));
         btn_share.setOnClickListener(v -> {
             String textToShare = textOutput.getText().toString();
             if (!textToShare.isEmpty()) {
@@ -86,26 +89,48 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, textToShare);
                 startActivity(Intent.createChooser(intent, "Teilen"));
+                btn_share.clearColorFilter();
+                btn_share.setImageResource(R.drawable.icon_trump);
             }
         });
         btn_copy = findViewById(R.id.btn_copy);
+        btn_copy.setColorFilter(getResources().getColor(R.color.green_500));
         btn_copy.setOnClickListener(v -> {
             String textToCopy = textOutput.getText().toString();
             if (!textToCopy.isEmpty()) {
                 android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(android.content.Context.CLIPBOARD_SERVICE);
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", textToCopy);
                 clipboard.setPrimaryClip(clip);
+                btn_copy.clearColorFilter();
+                btn_copy.setImageResource(R.drawable.icon_trump);
             }
         });
-        btn_shorttext = findViewById(R.id.btn_textshorter);
-        btn_shorttext.setOnClickListener(v -> {
-            btn_layout.setVisibility(GONE);
-            startTranscription();
+        btn_playpause = findViewById(R.id.btn_playpause);
+        btn_playpause.setOnClickListener(v -> {
+            if (mediaPlayer != null) {
+                if (isPlaying) {
+                    mediaPlayer.pause();
+                    btn_playpause.setImageResource(R.drawable.icon_play);
+                    isPlaying = false;
+                } else {
+                    mediaPlayer.start();
+                    btn_playpause.setImageResource(R.drawable.icon_pause);
+                    isPlaying = true;
+                }
+            } else {
+                try {
+                    playAudio(audioFile, true);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Audio ist nicht verfügbar", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         });
         progressBar = findViewById(R.id.progressBar);
         progressText = findViewById(R.id.progressText);
 
         btnTranscribe.setOnClickListener(v -> {
+            btnTranscribe.setVisibility(GONE);
             btn_layout.setVisibility(GONE);
             startTranscription();
         });
@@ -150,7 +175,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
                 }
 
                 File wavFile = convertAudioToWav(audioFile); // Konvertiere die Audio-Datei in WAV
-                runOnUiThread(() -> playAudio(wavFile));
+                runOnUiThread(() -> playAudio(wavFile, false)); // Nur vorbereiten, nicht abspielen
                 transcribeAudio(wavFile); // Transkribiere die WAV-Datei
 
             } catch (Exception e) {
@@ -160,7 +185,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
         }).start();
     }
 
-    private void playAudio(File audioFile) {
+    private void playAudio(File audioFile, boolean shouldStartImmediately) {
         try {
             if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
@@ -176,8 +201,20 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
             mediaPlayer.prepareAsync();
 
             mediaPlayer.setOnPreparedListener(mp -> {
-                Log.d("MediaPlayer", "Duration: " + mp.getDuration() + "ms");
-                mp.start();
+                Log.d("MediaPlayer", "Prepared: Duration " + mp.getDuration() + "ms");
+                if (shouldStartImmediately) {
+                    mp.start();
+                    isPlaying = true;
+                    btn_playpause.setImageResource(R.drawable.icon_pause);
+                } else {
+                    isPlaying = false;
+                    btn_playpause.setImageResource(R.drawable.icon_play);
+                }
+            });
+
+            mediaPlayer.setOnCompletionListener(mp -> {
+                isPlaying = false;
+                btn_playpause.setImageResource(R.drawable.icon_play);
             });
 
         } catch (IOException e) {
@@ -197,6 +234,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
             speechStreamService.stop();
             speechStreamService = null;
         }
+        isPlaying = false;
     }
 
     private void handleIntent(Intent intent) {
@@ -521,6 +559,7 @@ public class TargetActivity extends AppCompatActivity implements RecognitionList
     public void onFinalResult(String hypothesis) {
         appendResult(hypothesis);
         btn_layout.setVisibility(VISIBLE);
+        btnTranscribe.setVisibility(VISIBLE);
         if (speechStreamService != null) {
             speechStreamService = null;
         }
