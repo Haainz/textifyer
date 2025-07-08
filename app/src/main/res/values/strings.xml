@@ -18,4 +18,8 @@
     <string name="darkmode">Dunkel</string>
     <string name="systemmode">Systemeinstellung</string>
     <string name="language">Sprache:</string>
+    <string name="statusconverting">Konvertiere deine Audiodatei…</string>
+    <string name="statusanalysing">Analysiere die Audiodaten…</string>
+    <string name="statustranscribe">Generiere Text…</string>
+    <string name="errorsmayoccur">Achtung: Bei diesem Dateiformat treten häufig Fehler auf!</string>
 </resources>

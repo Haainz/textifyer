@@ -18,4 +18,8 @@
     <string name="darkmode">Oscuro</string>
     <string name="systemmode">Configuración del sistema</string>
     <string name="language">Lengua:</string>
+    <string name="statusconverting">Convertir un archivo de audio…</string>
+    <string name="statusanalysing">Análisis de los datos de audio…</string>
+    <string name="statustranscribe">Generar texto…</string>
+    <string name="errorsmayoccur">Advertencia: A menudo se producen errores con este formato de archivo!</string>
 </resources>

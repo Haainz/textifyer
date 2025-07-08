@@ -1,38 +1,20 @@
 package com.textifyer;
 
-import static androidx.core.graphics.drawable.DrawableCompat.applyTheme;
-
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.AsyncTask;
 import android.content.SharedPreferences;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import com.textifyer.databinding.ActivityMainBinding;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private static final String MODEL_DIR_NAME = "vosk-model";
     private SharedPreferences prefs;
 
 

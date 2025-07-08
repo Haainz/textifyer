@@ -23,8 +23,11 @@
             android:id="@+id/datatxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/homebtn"
+            android:layout_alignBottom="@id/homebtn"
             android:layout_marginStart="8dp"
-            android:layout_toRightOf="@+id/homebtn" />
+            android:layout_toEndOf="@+id/homebtn"
+            android:gravity="center_vertical" />
     </RelativeLayout>
 
     <Button
@@ -33,6 +36,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/transcribe" />
+
+    <TextView
+        android:id="@+id/progressText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="24dp"
+        android:text="Konvertiere..."
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginBottom="16dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/yellow"
+        android:visibility="gone" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -48,6 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
+                android:textIsSelectable="true"
                 android:textSize="16sp" />
 
             <RelativeLayout
@@ -63,9 +88,9 @@
                     android:layout_height="24dp"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="30dp"
+                    android:adjustViewBounds="true"
                     android:background="#00FFFFFF"
                     android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
                     android:src="@drawable/icon_share" />
 
                 <ImageButton
@@ -73,9 +98,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_centerHorizontal="true"
+                    android:adjustViewBounds="true"
                     android:background="#00FFFFFF"
                     android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
                     android:src="@drawable/icon_copy" />
 
                 <ImageButton
@@ -84,31 +109,12 @@
                     android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="30dp"
+                    android:adjustViewBounds="true"
                     android:background="#00FFFFFF"
                     android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
                     android:src="@drawable/icon_play"
-                    app:tint="@color/green_500"/>
+                    app:tint="@color/green_500" />
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
-
-    <TextView
-        android:id="@+id/progressText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Konvertiere..."
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginBottom="16dp"
-        android:max="100"
-        android:progress="0"
-        android:progressTint="@color/yellow"
-        android:visibility="gone" />
 </LinearLayout>
