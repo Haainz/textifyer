@@ -11,7 +11,7 @@
         directamente desde WhatsApp con esta app. A continuación, el mensaje de voz se transcribe automáticamente
         y se muestra como texto.
     </string>
-    <string name="starttexttitle">Bienvenido a nuestro sitio web! 👋</string>
+    <string name="starttexttitle">Bienvenido! 👋</string>
     <string name="transcribe">Transcriba</string>
     <string name="settingstitle">Ajustes</string>
     <string name="lightmode">Luz</string>

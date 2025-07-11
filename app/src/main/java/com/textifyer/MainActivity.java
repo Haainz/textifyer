@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
 
         // 1. Unterstützte Sprachen
-        String[] supportedLangs = {"de", "en", "es"};
+        String[] supportedLangs = {"de", "en", "es", "fr"};
 
         // 2. Gespeicherte Sprache holen
         String savedLang = prefs.getString("lang", null); // null = nicht gesetzt

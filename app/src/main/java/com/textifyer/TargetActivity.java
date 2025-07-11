@@ -28,6 +28,17 @@ import org.vosk.android.StorageService;
 import java.io.File;
 import java.io.IOException;
 
+import android.widget.Spinner;
+import android.widget.AdapterView;
+import com.textifyer.language.LanguageAdapter;
+import com.textifyer.language.LanguageItem;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import android.view.View;
+
+
+
 public class TargetActivity extends AppCompatActivity {
 
     private TextView textOutput;
@@ -36,6 +47,8 @@ public class TargetActivity extends AppCompatActivity {
     private RelativeLayout btnLayout;
     private TextView dataname, progressText;
     private ProgressBar progressBar;
+
+    private Spinner languageSpinner;
 
     private File audioFile;
     private Model model;
@@ -56,6 +69,7 @@ public class TargetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_target);
 
         initViews();
+        LanguageSpinner();
         initListeners();
         handleIntent(getIntent());
 
@@ -84,6 +98,9 @@ public class TargetActivity extends AppCompatActivity {
         dataname = findViewById(R.id.datatxt);
         progressBar = findViewById(R.id.progressBar);
         progressText = findViewById(R.id.progressText);
+
+        languageSpinner = findViewById(R.id.language_spinner);
+
     }
 
     private void initListeners() {
@@ -192,6 +209,8 @@ public class TargetActivity extends AppCompatActivity {
         liveText.setLength(0);
         progressBar.setVisibility(VISIBLE);
         progressText.setVisibility(VISIBLE);
+        languageSpinner.setVisibility(View.GONE);
+
 
         transcriptionService.startTranscription(
                 this,
@@ -229,6 +248,7 @@ public class TargetActivity extends AppCompatActivity {
                             progressText.setVisibility(GONE);
                             btnLayout.setVisibility(VISIBLE);
                             btnTranscribe.setVisibility(VISIBLE);
+                            languageSpinner.setVisibility(View.VISIBLE);
                         });
                     }
 
@@ -298,4 +318,50 @@ public class TargetActivity extends AppCompatActivity {
             return "";
         }
     }
+
+    private void LanguageSpinner() {
+        Spinner languageSpinner = findViewById(R.id.language_spinner);
+
+        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        String currentLang = prefs.getString("lang", "de");
+
+        List<LanguageItem> languages = Arrays.asList(
+                new LanguageItem("de", "Deutsch", R.drawable.flag_germany),
+                new LanguageItem("en", "English", R.drawable.flag_uk),
+                new LanguageItem("es", "Español", R.drawable.flag_es),
+                new LanguageItem("fr", "Français", R.drawable.flag_fr)
+        );
+
+        LanguageAdapter adapter = new LanguageAdapter(this, languages);
+        languageSpinner.setAdapter(adapter);
+
+        // Aktuelle Sprache vorauswählen
+        for (int i = 0; i < languages.size(); i++) {
+            if (languages.get(i).getLanguageCode().equals(currentLang)) {
+                languageSpinner.setSelection(i);
+                break;
+            }
+        }
+
+        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedLang = languages.get(position).getLanguageCode();
+                if (!selectedLang.equals(currentLang)) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("lang", selectedLang);
+                    editor.apply();
+
+                    recreate(); // neu starten für Sprachübernahme
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+    }
+
 }

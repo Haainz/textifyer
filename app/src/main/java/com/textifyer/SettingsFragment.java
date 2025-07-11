@@ -60,7 +60,8 @@ public class SettingsFragment extends Fragment {
         List<LanguageItem> languages = Arrays.asList(
                 new LanguageItem("de", "Deutsch", R.drawable.flag_germany),
                 new LanguageItem("en", "English", R.drawable.flag_uk),
-                new LanguageItem("es","Español", R.drawable.flag_es)
+                new LanguageItem("es","Español", R.drawable.flag_es),
+                new LanguageItem("fr","Français", R.drawable.flag_fr)
         );
 
         LanguageAdapter adapter = new LanguageAdapter(requireContext(), languages);

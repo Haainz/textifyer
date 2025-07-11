@@ -114,7 +114,17 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/icon_play"
                     app:tint="@color/green_500" />
+
+
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+
+    <Spinner
+        android:id="@+id/language_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="16dp" />
+
 </LinearLayout>

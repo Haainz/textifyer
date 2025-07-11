@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Textifyer</string>
+    <string name="action_settings">Settings</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="settingsbtn">Paramètres</string>
+    <string name="paste">Cliquez ici pour transcrire un fichier audio</string>
+    <string name="starttext">
+        Avec Textifyer, vous pouvez facilement convertir les messages vocaux en texte. Pour ce faire,
+ cliquez sur le bouton en bas au centre ou partagez un message vocal directement depuis
+ WhatsApp avec cette application. Le message vocal est alors automatiquement transcrit
+ et affiché sous forme de texte. Amusez-vous bien en l´essayant!
+    </string>
+    <string name="starttexttitle">Bienvenue! 👋</string>
+    <string name="transcribe">Transcrire</string>
+    <string name="settingstitle">Paramètres</string>
+    <string name="lightmode">lumière</string>
+    <string name="darkmode">sombre</string>
+    <string name="systemmode">Configuration du système</string>
+    <string name="language">langue:</string>
+    <string name="statusconverting">Convertir votre fichier audio…</string>
+    <string name="statusanalysing">Analyse des données audio…</string>
+    <string name="statustranscribe">Générer du texte…</string>
+    <string name="errorsmayoccur">Attention: Des erreurs se produisent souvent avec ce format de fichier!</string>
+</resources>
