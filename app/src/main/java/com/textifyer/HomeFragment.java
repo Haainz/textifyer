@@ -101,7 +101,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void openAudioPicker() {
-        // Using ACTION_GET_CONTENT via ActivityResult launcher, filtered for audio/* mimetype
         audioPickerLauncher.launch("audio/*");
     }
 

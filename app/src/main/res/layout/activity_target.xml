@@ -30,6 +30,38 @@
             android:gravity="center_vertical" />
     </RelativeLayout>
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp">
+
+        <RadioButton
+            android:id="@+id/radio_de"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deutsch" />
+
+        <RadioButton
+            android:id="@+id/radio_en"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="English" />
+
+        <RadioButton
+            android:id="@+id/radio_es"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Español" />
+
+        <RadioButton
+            android:id="@+id/radio_fr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Français" />
+    </RadioGroup>
+
     <Button
         android:id="@+id/btnTranscribe"
         android:layout_width="match_parent"
@@ -119,12 +151,4 @@
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
-
-    <Spinner
-        android:id="@+id/language_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_margin="16dp" />
-
 </LinearLayout>

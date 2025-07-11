@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,8 @@ public class TargetActivity extends AppCompatActivity {
     private TextView dataname, progressText;
     private ProgressBar progressBar;
 
-    private Spinner languageSpinner;
+    private RadioGroup radioGroup;
+    private String selectedLanguageCode;
 
     private File audioFile;
     private Model model;
@@ -69,14 +71,46 @@ public class TargetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_target);
 
         initViews();
-        LanguageSpinner();
         initListeners();
         handleIntent(getIntent());
 
         audioPlayer = new AudioPlayer();
         transcriptionService = new TranscriptionService();
 
-        initModel();
+        radioGroup = findViewById(R.id.radioGroup);
+        radioGroup.setVisibility(VISIBLE);
+
+        // Sprachcode aus SharedPreferences laden
+        String savedLang = prefs.getString("lang", "en");
+
+        int selectedRadioId = R.id.radio_en; // default fallback
+        if ("de".equals(savedLang)) {
+            selectedRadioId = R.id.radio_de;
+        } else if ("en".equals(savedLang)) {
+            selectedRadioId = R.id.radio_en;
+        } else if ("es".equals(savedLang)) {
+            selectedRadioId = R.id.radio_es;
+        } else if ("fr".equals(savedLang)) {
+            selectedRadioId = R.id.radio_fr;
+        }
+
+        radioGroup.check(selectedRadioId);
+        selectedLanguageCode = savedLang; // Initial setzen
+        initModel(selectedLanguageCode);
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            btnTranscribe.setVisibility(GONE);
+            if (checkedId == R.id.radio_de) {
+                selectedLanguageCode = "de";
+            } else if (checkedId == R.id.radio_en) {
+                selectedLanguageCode = "en";
+            } else if (checkedId == R.id.radio_es) {
+                selectedLanguageCode = "es";
+            } else if (checkedId == R.id.radio_fr) {
+                selectedLanguageCode = "fr";
+            }
+            initModel(selectedLanguageCode);
+        });
     }
 
     private void initViews() {
@@ -98,9 +132,6 @@ public class TargetActivity extends AppCompatActivity {
         dataname = findViewById(R.id.datatxt);
         progressBar = findViewById(R.id.progressBar);
         progressText = findViewById(R.id.progressText);
-
-        languageSpinner = findViewById(R.id.language_spinner);
-
     }
 
     private void initListeners() {
@@ -192,8 +223,9 @@ public class TargetActivity extends AppCompatActivity {
         }
     }
 
-    private void initModel() {
-        StorageService.unpack(this, "model-de", "model-de",
+    private void initModel(String lang) {
+        Log.e("initModel", "model-"+lang);
+        StorageService.unpack(this, "model-"+lang, "model-"+lang,
                 (model) -> {
                     this.model = model;
                     btnTranscribe.setVisibility(VISIBLE);
@@ -209,7 +241,7 @@ public class TargetActivity extends AppCompatActivity {
         liveText.setLength(0);
         progressBar.setVisibility(VISIBLE);
         progressText.setVisibility(VISIBLE);
-        languageSpinner.setVisibility(View.GONE);
+        radioGroup.setVisibility(View.GONE);
 
 
         transcriptionService.startTranscription(
@@ -248,7 +280,7 @@ public class TargetActivity extends AppCompatActivity {
                             progressText.setVisibility(GONE);
                             btnLayout.setVisibility(VISIBLE);
                             btnTranscribe.setVisibility(VISIBLE);
-                            languageSpinner.setVisibility(View.VISIBLE);
+                            radioGroup.setVisibility(View.GONE);
                         });
                     }
 
@@ -318,50 +350,4 @@ public class TargetActivity extends AppCompatActivity {
             return "";
         }
     }
-
-    private void LanguageSpinner() {
-        Spinner languageSpinner = findViewById(R.id.language_spinner);
-
-        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
-        String currentLang = prefs.getString("lang", "de");
-
-        List<LanguageItem> languages = Arrays.asList(
-                new LanguageItem("de", "Deutsch", R.drawable.flag_germany),
-                new LanguageItem("en", "English", R.drawable.flag_uk),
-                new LanguageItem("es", "Español", R.drawable.flag_es),
-                new LanguageItem("fr", "Français", R.drawable.flag_fr)
-        );
-
-        LanguageAdapter adapter = new LanguageAdapter(this, languages);
-        languageSpinner.setAdapter(adapter);
-
-        // Aktuelle Sprache vorauswählen
-        for (int i = 0; i < languages.size(); i++) {
-            if (languages.get(i).getLanguageCode().equals(currentLang)) {
-                languageSpinner.setSelection(i);
-                break;
-            }
-        }
-
-        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedLang = languages.get(position).getLanguageCode();
-                if (!selectedLang.equals(currentLang)) {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("lang", selectedLang);
-                    editor.apply();
-
-                    recreate(); // neu starten für Sprachübernahme
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-
-    }
-
 }
