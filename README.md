@@ -11,6 +11,7 @@ Einfache Android App zum konvertieren von Sprachnachrichten in Text.
 - deutsch, englisch, französisch und spanisch werden unterstützt
 
 ## Taskboard:
-[Hier gehts zu unserem Taskboard](https://github.com/users/Haainz/projects/6)
+[Hier geht's zu unserem Taskboard](https://github.com/users/Haainz/projects/6)
 
-## Neustes Release:
+## Veröffentlichungen:
+[Hier geht's zu den Releases](https://github.com/Haainz/textifyer/releases/)
